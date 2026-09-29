@@ -2,23 +2,14 @@
 
 import os
 import pickle
-import pybullet as p
 from time import sleep
 import builtins
 import datetime
 import matplotlib
-import matplotlib.pyplot as plt
-import matplotlib.gridspec as gridspec
-import matplotlib.patches as patches
-from matplotlib.patches import FancyArrowPatch, ConnectionPatch
 import argparse, ast
-from math import exp, log, pi
-from random import choice, choices
 import torch
 import psutil
-from itertools import product
 import tkinter as tk
-import numpy as np
 
 # -------------------------------
 # DIRECTORY CHECK

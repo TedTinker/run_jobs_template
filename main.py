@@ -11,9 +11,7 @@ from time import sleep
 from math import floor
 
 from utils import args, folder, duration, estimate_total_duration, print, cpu_memory_usage, duration, print_duration, wait_for_button_press
-from buffer import RecurrentReplayBuffer
 from agent import Agent
-from agent_lstm import Agent as Agent_lstm
 
 print('\nname:\n{}'.format(args.arg_name))
 print('\nagents: {}. previous_agents: {}.'.format(args.agents, args.previous_agents))
@@ -21,6 +19,8 @@ print('\nagents: {}. previous_agents: {}.'.format(args.agents, args.previous_age
 
 def train(q, i):
     """Train one agent (i) and send progress updates to queue q."""
+    torch.set_num_threads(1)            # one core per agent; otherwise every agent
+    torch.set_num_interop_threads(1)    # tries to use all of them at once
     seed = args.init_seed + i
     np.random.seed(int(seed))
     random.seed(int(seed))
@@ -59,42 +59,36 @@ if __name__ == '__main__':
         processes.append(process)
         process.start()
 
-    # Progress tracking
-    progress_dict      = {i: '0'   for i in range(1 + args.previous_agents, 1 + args.agents + args.previous_agents)}
-    prev_progress_dict = {i: None for i in range(1 + args.previous_agents, 1 + args.agents + args.previous_agents)}
+    # Progress tracking. Agents may send progress as a float or a string; store floats.
+    agent_ids = range(1 + args.previous_agents, 1 + args.agents + args.previous_agents)
+    progress_dict      = {i: 0.0  for i in agent_ids}
+    prev_progress_dict = {i: None for i in agent_ids}
 
     while any(process.is_alive() for process in processes) or not queue.empty():
         while not queue.empty():
-            worker_id, progress_percentage = queue.get()
-            progress_dict[worker_id] = progress_percentage
+            worker_id, progress = queue.get()
+            progress_dict[worker_id] = float(progress)
 
         # If there's been any progress update, print the new state.
-        if any(progress_dict[k] != prev_progress_dict[k] for k in progress_dict):
+        if progress_dict != prev_progress_dict:
             prev_progress_dict = progress_dict.copy()
 
-            values = list(progress_dict.values())
-            values.sort()
+            values = sorted(progress_dict.values())
             so_far = duration()
-            lowest = float(values[0])
-            estimated_total = estimate_total_duration(lowest)
+            estimated_total = estimate_total_duration(values[0])
             to_do = '?:??:??' if estimated_total == '?:??:??' else estimated_total - so_far
 
             values_display = []
             hundreds = 0
             for value in values:
-                val_str = str(floor(100 * float(value))).ljust(3, ' ')
-                if val_str == '100':
+                val_str = str(floor(100 * value)).ljust(3, ' ')
+                if val_str.strip() == '100':
                     hundreds += 1
                 else:
                     values_display.append(val_str)
 
-            bar = ' '.join(values_display)
-            if hundreds > 0:
-                bar += ' ##' + ' 100' * hundreds
-            if hundreds == 0:
-                bar += ' ##'
+            bar = ' '.join(values_display) + ' ##' + ' 100' * hundreds
             bar = f'{so_far} ({to_do} left):\t' + bar.rstrip() + '.'
-
             print(bar)
 
         sleep(15)

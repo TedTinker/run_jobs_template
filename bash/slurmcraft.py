@@ -85,9 +85,10 @@ def add_this(name, args):
 
 
 # For example: agents with entropy.
-add_this('entropy',   {
+add_this('e',   {
     'alpha' : 'None', 
-    'target_entropy' : [-2, -1.5, -1]})    
+    'target_entropy' : [-3, -2, -1]})    
+
 
 
 
@@ -134,7 +135,7 @@ def slurm_header(comp, cpus=1):
     return '\n'.join(lines) + '\n'
 
 if __name__ == '__main__' and args.arg_list != []:
-    run = f'singularity exec{CLUSTERS[args.comp]["nv"]} {SIF_FILE} python {FOLDER_NAME}'
+    run = f'singularity exec{CLUSTERS[args.comp]["nv"]} {SIF_FILE}.sif python {FOLDER_NAME}'
 
     for name in args.arg_list:
         if name in ['break', 'empty_space']:

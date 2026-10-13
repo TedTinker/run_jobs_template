@@ -12,8 +12,7 @@ import shutil
 
 # This file is only for viewing data for robots with various arguments mid-training.
 
-from config import FOLDER_NAME, SIF_FILE
-name_of_folder = FOLDER_NAME
+name_of_folder = "curious_maze"
 
 # It may be important to observe only a few robot's data, in order to conserve memory.
 files_to_create = [i for i in range(1, 11)]
@@ -330,3 +329,4 @@ if __name__ == '__main__':
     root = tk.Tk()
     app = GUIApp(root)
     root.mainloop()
+# %%

@@ -8,11 +8,13 @@ Use bash/slurmcraft.py to make classes of arguments. For example, train agents w
 
 In utils.py, add defaults for all those hyperparameters.
 
-Update agent.py. Its training function should update q, the proportion of training complete. 
+Update agent.py. Its training function should update q, the proportion of training complete.
 
 Run main.py with a terminal command like this:
 
 bash project_file_name/bash/shell.sh "arg_list=(list of argument names from slurmcraft.py)" "comp=computer_cluster_name" "agents=30"
+
+If there are classes arguments like name_1, name_2, name_3, ..., then name_ will run all jobs of that form.
 
 After jobs complete, finish_dicts.py gathers data saved in training.
 

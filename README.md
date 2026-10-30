@@ -8,7 +8,7 @@ Use bash/slurmcraft.py to make classes of arguments. For example, train agents w
 
 In utils.py, add defaults for all those hyperparameters.
 
-Update agent.py. Its training function must run RL episodes which provide observations and extrinsic rewards. It also mush push information to the memory buffer and use that to run epochs.
+Update agent.py. Its training function should update q, the proportion of training complete. 
 
 Run main.py with a terminal command like this:
 

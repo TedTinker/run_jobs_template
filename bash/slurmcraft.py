@@ -116,6 +116,12 @@ def all_like_this(this):
         result = [key for key in slurm_dict.keys() if key.startswith(this) and key[len(this):].isdigit()]
     return(json.dumps(result))
 
+
+
+if __name__ == '__main__':
+    for arg_name, arg_list in slurm_dict.items():
+        print(f'{arg_name}: \t {arg_list}')
+
             
 
 max_cpus = min(args.agents, MAX_AGENTS_PER_JOB)
